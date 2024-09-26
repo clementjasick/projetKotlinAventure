@@ -45,8 +45,23 @@ class Jeu(monstres: List<Personnage>) {
      */
     fun creerPersonnage(): Personnage {
         println("Création votre personnage:")
-        // TODO Mission 1.1
-        val hero = Personnage("YYY",150,150,12,8,8,12)
+        println("Choisissez un nom :")
+        val nom = readln()
+        println("Choisissez un score d'attaque ,de defense, d'endurance  et de vitesse(total = 40  :")
+        var scoreAttaque = readln().toInt()
+        var scoreDefense = readln().toInt()
+        var scoreEnd = readln().toInt()
+        var scoreVitesse = readln().toInt()
+        while (scoreEnd+scoreDefense+scoreAttaque+scoreVitesse>40){
+            println("Choisissez un score d'attaque ,de defense ,d'endurance et de vitesse (total = 40  :")
+            scoreAttaque = readln().toInt()
+            scoreDefense = readln().toInt()
+            scoreEnd = readln().toInt()
+            scoreVitesse = readln().toInt()
+        }
+        var pv = 50+10*scoreEnd
+        val pvMax = pv
+        val hero = Personnage(nom, pv, pvMax, scoreAttaque ,scoreDefense,scoreEnd,scoreVitesse,null,null,mutableListOf())
         this.joueur= hero
         return hero
     }
