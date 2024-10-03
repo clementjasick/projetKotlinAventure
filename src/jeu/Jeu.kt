@@ -1,7 +1,12 @@
 package jeu
 
 import personnage.Personnage
-
+import personnage.Guerrier
+import personnage.Voleur
+import personnage.Mage
+import grossePopo
+import petitePopo
+import moyennePopo
 
 
 class Jeu(monstres: List<Personnage>) {
@@ -61,7 +66,13 @@ class Jeu(monstres: List<Personnage>) {
         }
         var pv = 50+10*scoreEnd
         val pvMax = pv
-        val hero = Personnage(nom, pv, pvMax, scoreAttaque ,scoreDefense,scoreEnd,scoreVitesse,null,null,mutableListOf())
+        println("choisissez une classe: 1 => Guerrier, 2 => Voleur,3 => Mage")
+        var perso = readln().toInt()
+        val hero = when (perso) {
+            1 -> Guerrier(nom,pv,pvMax,scoreAttaque,scoreDefense,scoreEnd,scoreVitesse,null,null,null,mutableListOf(grossePopo))
+            2 -> Voleur(nom,pv,pvMax,scoreAttaque,scoreDefense,scoreEnd,scoreVitesse,null,null,mutableListOf(petitePopo))
+            else -> Mage(nom,pv,pvMax,scoreAttaque,scoreDefense,scoreEnd,scoreVitesse,null,null,mutableListOf(moyennePopo),mutableListOf())
+        }
         this.joueur= hero
         return hero
     }

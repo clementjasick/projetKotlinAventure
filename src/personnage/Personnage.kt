@@ -4,7 +4,7 @@ import item.Arme
 import item.Armure
 import item.Bombe
 import item.Item
-import item.potion
+import item.Potion
 import kotlin.math.max
 
 /**
@@ -33,7 +33,7 @@ des armes, des armures, ainsi qu'à gérer un inventaire.
 
 @property inventaire L'inventaire contenant des objets (armes, armures, potions, bombes, etc.). */
 
-    class Personnage(
+    open class Personnage(
     val nom: String,
     var pointDeVie: Int,
     val pointDeVieMax: Int,
@@ -77,7 +77,7 @@ des armes, des armures, ainsi qu'à gérer un inventaire.
     }
 
      // Méthode pour attaquer un adversaire
-     fun attaque(adversaire: Personnage)     {
+     open fun attaque(adversaire: Personnage)     {
         //TODO Mission 4.1
        var degats= (this.attaque/2)
 
@@ -93,25 +93,91 @@ des armes, des armures, ainsi qu'à gérer un inventaire.
          degats= max(1,degats)
          adversaire.pointDeVie-=degats
     }
-    fun avoirPotion(potion: potion): Boolean{
-        if (potion in inventaire){
-            return true
-        }else{
-            return false
+    /**
+     * Vérifie si le personnage possède une potion dans son inventaire.
+     *
+     * @return `true` si une potion est trouvée dans l'inventaire, `false` sinon.
+     */
+    fun avoirPotion(): Boolean {
+        for (item in this.inventaire) {
+            if (item is Potion) {
+                return true
+            }
+        }
+        return false
+    }
+
+    /**
+     * Vérifie si le personnage possède une bombe dans son inventaire.
+     *
+     * @return `true` si une bombe est trouvée dans l'inventaire, `false` sinon.
+     */
+    fun avoirBombe(): Boolean {
+        for (item in this.inventaire) {
+            if (item is Bombe) {
+                return true
+            }
+        }
+        return false
+    }
+
+    /**
+     * Permet au personnage de boire une potion s'il en possède une.
+     * Affiche la liste des potions disponibles dans l'inventaire et permet de choisir laquelle utiliser.
+     * La potion choisie est ensuite utilisée pour restaurer les points de vie du personnage.
+     */
+    fun boirePotion() {
+        if (avoirPotion()) {
+            val potion: MutableList<Potion> = mutableListOf()
+            for (item in this.inventaire) {
+                if (item is Potion) {
+                    potion.add(item)
+                }
+            }
+            // Affiche la liste des potions disponibles
+            println("Liste des potions")
+            var i = 0
+            for (unePotion in potion) {
+                println("$i => ${unePotion.nom}")
+                i++
+            }
+            // Sélection de la potion à utiliser
+            println("Saisir la potion")
+            val indexPotion = readln().toInt()
+            val laPotion = potion[indexPotion]
+            laPotion.utiliser(this)
         }
     }
-    fun avoirBombe(bombe: Bombe):Boolean{
-        if (bombe in inventaire){
-            return true
-        }else{
-            return false
+
+    /**
+     * Affiche l'inventaire complet du personnage avec une numérotation des objets.
+     */
+    fun afficherInventaire() {
+        println("Inventaire de ${this.nom}")
+        for (i in inventaire.indices) {
+            println("$i => ${inventaire[i]}")
         }
     }
-    fun boirePotion(potion: potion,cible: Personnage){
-        if (avoirPotion(potion)==true){
-            potion.utiliser(cible)
+
+    /**
+     * Permet au personnage de looter l'inventaire d'un adversaire vaincu.
+     * Si les points de vie de la cible sont à 0 ou moins, son arme et armure principales sont retirées,
+     * et tout son inventaire est transféré à celui du personnage.
+     *
+     * @param cible Le personnage vaincu dont l'inventaire est pillé.
+     */
+    fun loot(cible: Personnage) {
+        if (cible.pointDeVie <= 0) {
+            // Retire l'arme et l'armure principale de la cible
+            cible.armePrincipal = null
+            cible.armurePrincipal = null
+        }
+        // Transfert des objets de l'inventaire de la cible vers celui du personnage
+        for (item in cible.inventaire) {
+            this.inventaire.add(item)
         }
     }
+
     override fun toString(): String {
         return "$nom (PV: $pointDeVie/$pointDeVieMax, Attaque: $attaque, Défense: $defense, Endurance: $endurance, Vitesse: $vitesse)"
     }
