@@ -80,16 +80,11 @@ val bombe = Bombe("bombe","a utilisé avec précaution",5,15)
 val projectionAcide= Sort("sort de projection d'acide",{perso,cible->
     run{
         val tirageDes = TirageDes(1,10)
-        var compteur = 0
-        var degat = 0
-        while (compteur<perso.attaque/2){
-            degat += tirageDes.lance()
-            cible.pointDeVie -= degat
-            compteur+=1
-            println("missile magique inflige $degat degats")
-        }
-    }
-})
+        var degat = tirageDes.lance()
+        degat = maxOf(1,degat-cible.calculeToTalDefense())
+        cible.pointDeVie -= degat
+        println("le jet d'acide inflige $degat à ${cible.nom}")
+}})
 
 val bouledefeu = Sort("boule de feu",{perso,cible->
     run{
@@ -131,20 +126,19 @@ val sortDeSoin = Sort("sort de soin", {perso,personne->
 
 val invocationArmure = Sort("InvocationArmureMagique" ,{perso,cible->
     run {
-        val lancerD =TirageDes(1,20).lance()
-        var qualite: Qualite= Item.qualite
-        if (lancerD < 5 ){
+        val lancerD = TirageDes(1, 20).lance()
+        var qualite: Qualite = Item.qualite
+        if (lancerD < 5) {
             qualite = qualiteCommun
-        }
-        else if (lancerD>=5 and lancerD < 10){
-            qualite=qualiteRare
-        }else if (lancerD>=10 and lancerD<15) {
+        } else if (lancerD >= 5 && lancerD < 10) {
             qualite = qualiteRare
-        }else{
-            qualite=qualiteLegendaire
+        } else if (lancerD >= 10 && lancerD < 15) {
+            qualite = qualiteRare
+        } else {
+            qualite = qualiteLegendaire
 
         }
-
+    }
 })
 
 fun main(args: Array<String>) {
